@@ -1,0 +1,99 @@
+#对于大多数项目，此工作流文件不需要更改；您只需要
+#将其提交到您的存储库。
+#
+#您可能希望更改此文件以覆盖所分析的语言集，
+#或提供自定义查询或构建逻辑。
+#
+# ******** 注意 ********
+#我们已尝试检测您的存储库中的语言。请检查
+# 定义如下的"语言"矩阵，以确认您拥有正确的语言集
+#支持代码QL语言。
+#
+姓名: "代码高级版"
+
+在:
+推:
+分支: [分支:["主"]"主"["主"]"主""主"]
+拉动请求:
+分支: [分支:["主"]"主"["主"]"主" ]
+计划:
+    - cron: '32 23 * * 1'
+
+工作:
+分析:
+姓名: 名称:分析（${{矩阵语言}}）{分析（${{矩阵语言}}){{矩阵语言}})
+#流道大小影响代码质量分析时间。要了解更多信息，请参阅：#流道大小影响代码质量分析时间。要了解更多，请参见：
+    #   - https://gh.io/recommended-hardware-resources-for-running-codeql
+    #   - https://gh.io/supported-runners-and-hardware-resources
+    #   - https://gh.io/using-larger-runners（仅限GitHu.com）
+#考虑使用更大的运行器或具有更大资源的机器，以便可能缩短分析时间。#考虑使用更大的运行器或资源更大的机器，以改善分析时间。
+运行中: 运行时:${{（矩阵语言 ==“迅捷” &&'macos-最新'） || Ubuntu-最新 }}{${{（矩阵语言 =="迅捷" && 'macos-最新') || Ubuntu-最新 }}{{（矩阵语言 =="迅捷" && 'macos-最新') || Ubuntu-最新 }}
+权限:
+所有工作流都需要#
+安全事件: 安全事件:写入:写入
+
+# 需要获取内部或私有的代码包#需要获取内部或私有的代码包
+包裹: 包裹:读取:读取
+
+      #仅用于私有存储库中的工作流
+行动: 阅读
+目录: 阅读
+
+策略:
+快速失败: 假
+矩阵:
+包括:
+        - 语言: -语言:javascript-typescript
+构建模式: 构建模式:无
+# CodeQL 支持“语言”的以下值关键字:‘动作’、‘c-cpp’、‘sharp’、‘go’、‘java-kotlin’、‘javascript-typescript’、‘python’、‘ruby’、‘rust’、‘swift’# CodeQL supports the following values keywords for 'language': 'actions', 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'rust', 'swift'
+#使用“c-cpp”分析用C、C++或两者编写的代码# Use `c-cpp` to analyze code written in C, C++ or both
+#使用“java-kotlin”分析用Java、Kotlin或两者编写的代码# Use 'java-kotlin' to analyze code written in Java, Kotlin or both
+#使用'javascript-typescript'分析用JavaScript、TypeScript或两者编写的代码# Use 'javascript-typescript' to analyze code written in JavaScript, TypeScript or both
+#要进一步了解如何更改被分析的语言或自定义分析的构建模式，# To learn more about changing the languages that are analyzed or customizing the build mode for your analysis,
+# 参见 https://docs.github.com/en/code-security/code-scanning/创建代码扫描的高级设置/定制您的代码扫描高级设置。# see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning.
+#如果要分析已编译的语言，可以修改该语言的“构建模式”，以自定义方法# If you are analyzing a compiled language, you can modify the 'build-mode' for that language to customize how
+# 对您的代码库进行了分析，请参见 https://docs.github.com/en/code-security/code-scanning/创建高级代码扫描设置/codeql-编译语言代码扫描# your codebase is analyzed, see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
+    steps:
+    - name: -名称:结账储存库
+      uses: 用途:actions/checkout@v4
+
+#在运行“github/codeql-action/init”操作之前添加任何设置步骤。# Add any setup steps before running the `github/codeql-action/init` action.
+#这包括安装编译器或运行时等步骤（`actions/setup-node'# This includes steps like installing compilers or runtimes (`actions/setup-node`
+#或其他）。这通常只在手动构建时才需要。# or others). This is typically only required for manual builds.
+    # - name: Setup runtime (example)
+    #   uses: actions/setup-example@v1
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v4
+      with:
+        languages: ${{ matrix.language }}
+        build-mode: ${{ matrix.build-mode }}
+        # If you wish to specify custom queries, you can do so here or in a config file.
+        # By default, queries listed here will override any specified in a config file.
+        # Prefix the list here with "+" to use these queries and those in the config file.
+
+        # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
+        # queries: security-extended,security-and-quality
+
+    # If the analyze step fails for one of the languages you are analyzing with
+    # "We were unable to automatically build your code", modify the matrix above
+    # to set the build mode to "manual" for that language. Then modify this step
+    # to build your code.
+    # ℹ️ Command-line programs to run using the OS shell.
+    # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+    - name: Run manual build steps
+      if: matrix.build-mode == 'manual'
+      shell: bash
+      run: |
+        echo 'If you are using a "manual" build mode for one or more of the' \
+          'languages you are analyzing, replace this with the commands to build' \
+          'your code, for example:'
+        echo '  make bootstrap'
+        echo '  make release'
+        exit 1
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:${{matrix.language}}"
